@@ -12,6 +12,8 @@ def main():
 @app.route('/camera/')
 def camera():
     get_web()
+    # return render_template("video.html")
+ 
 
 @app.route('/my-link/')
 def my_link():
