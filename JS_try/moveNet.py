@@ -193,6 +193,7 @@ def get_web():
         'Angles CSV/angles.csv')
     happy_short_data = happy_short_data.drop(['Unnamed: 0'], axis=1)
     print(happy_short_data.head())
+    num_points = len(happy_short_data) # number of "frame_idx//30"'s we have
     while cap.isOpened():
         ret, frame = cap.read()  # fram- image
         if ret:
@@ -202,7 +203,7 @@ def get_web():
                 break
 
             # check if we should run the network
-            if frame_idx % 30 == 0:
+            if frame_idx % 30 == 0 and frame_idx//30 < num_points:
                 # do network stuff
                 #input: A frame of video or an image, represented as an
                 #float32 tensor of shape: 192x192x3. Channels order: RGB with values in [0, 255].
