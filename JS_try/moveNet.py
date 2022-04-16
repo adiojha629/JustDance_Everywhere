@@ -179,13 +179,38 @@ def draw_connections(frame, keypoints, edges, confidence_threshold):
             cv2.line(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0,0,255), 2)
 
 
+def Count_Down(num_seconds):
+    '''
+    A count down before the camera and the video start!
+    @param: num_seconds (int): number of seconds to count down
+
+    I use open-cv's window commands to display the count down.
+    Note: don't use time.sleep for waiting; it prevents open cv from displaying windows
+    We use waitKey instead
+
+    Code inspired by responses here:
+    https://stackoverflow.com/questions/31350240/python-opencv-open-window-on-top-of-other-applications
+    https://www.geeksforgeeks.org/python-opencv-cv2-puttext-method/
+    '''
+    cv2.namedWindow('CountDown!', cv2.WINDOW_NORMAL)
+    img = np.zeros((400,400,3))
+    for i in range(num_seconds):
+        print(num_seconds-i)
+        time_left = cv2.putText(img.copy(),str(num_seconds-i),(200,200),fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                                fontScale=1,color=(255,255,255),thickness=2,lineType=cv2.LINE_AA)
+        # use img.copy() so we don't write numbers on top of one another
+        cv2.imshow('CountDown!',time_left)
+        cv2.waitKey(1000)
+    print("Start!")
+    start_text = cv2.putText(img.copy(),"Start!",(200,200),fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                                fontScale=1,color=(255,255,255),thickness=2,lineType=cv2.LINE_AA)
+    cv2.imshow("CountDown!",start_text)
+    cv2.waitKey(1000)
+    cv2.destroyWindow("CountDown!")
 def get_web():
 
     # sleep and count down  
-    time.sleep(1)
-    for i in range(20):
-        print(20-i)
-        time.sleep(1)
+    Count_Down(num_seconds=10)
 
     cap = cv2.VideoCapture(0)
     frame_idx = 0 
@@ -262,5 +287,7 @@ def get_web():
 #             break
 
 
-# get_web()
+if __name__ == '__main__':
+    # get_web()
+    Count_Down(10)
 
