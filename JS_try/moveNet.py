@@ -207,11 +207,13 @@ def Count_Down(num_seconds):
     cv2.imshow("CountDown!",start_text)
     cv2.waitKey(1000)
     cv2.destroyWindow("CountDown!")
+
+
 def get_web():
 
     # sleep and count down  
     Count_Down(num_seconds=10)
-
+    
     cap = cv2.VideoCapture(0)
     frame_idx = 0 
     happy_short_data = pd.read_csv(
@@ -219,10 +221,14 @@ def get_web():
     happy_short_data = happy_short_data.drop(['Unnamed: 0'], axis=1)
     print(happy_short_data.head())
     num_points = len(happy_short_data) # number of "frame_idx//30"'s we have
+    scores = []
     while cap.isOpened():
         ret, frame = cap.read()  # fram- image
         if ret:
             frame = cv2.resize(frame, (640, 480), interpolation=cv2.INTER_LINEAR)
+            if len(scores):# display score if we have one
+                frame = cv2.putText(frame,"MSE: "+str(scores[-1]),(450,450),fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                                fontScale=1,color=(255,255,255),thickness=2,lineType=cv2.LINE_AA)
             cv2.imshow('MoveNet Lightning', frame)
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
@@ -267,10 +273,7 @@ def get_web():
                         'lower_body':['left_knee','right_knee']
                             })
                 print(frame_idx," ",score)
-                # scores.append(score)
-
-
-                # angles.append(get_angles_moveNet(keypoints))
+                scores.append(score)
             frame_idx+=1
         
     # cap.release()
@@ -288,6 +291,6 @@ def get_web():
 
 
 if __name__ == '__main__':
-    # get_web()
-    Count_Down(10)
+    get_web()
+    # Count_Down(10)
 
