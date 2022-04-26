@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np 
 from matplotlib import pyplot as plt
 import pandas as pd
+import threading
 import cv2
 import time
 from imutils.video import VideoStream
@@ -10,7 +11,7 @@ from imutils.video import VideoStream
 
 # vs, outputFrame, lock
 outputFrame = None
-lock = None
+lock = threading.Lock()
 check = 1
 # temp2 = input("press any key to continue")
 interpreter = tf.lite.Interpreter(model_path='lite-model_movenet_singlepose_lightning_3.tflite')
@@ -228,7 +229,7 @@ def get_web():
     happy_short_data = pd.read_csv(
         'Angles CSV/angles.csv')
     happy_short_data = happy_short_data.drop(['Unnamed: 0'], axis=1)
-    print(happy_short_data.head())
+    # print(happy_short_data.head())
     num_points = len(happy_short_data) # number of "frame_idx//30"'s we have
     scores = []
     while True:
@@ -273,7 +274,6 @@ def get_web():
                 keypoints = np.squeeze(keypoints_with_scores)
 
 
-
                 # print(keypoints_with_scores)
                 # draw_connections(frame, keypoints_with_scores, EDGES, 0.2)
                 draw_keypoints(frame, keypoints_with_scores, 0.2)
@@ -283,13 +283,15 @@ def get_web():
                 for key in jd_frame.keys():# [2,3]
                     jd_frame[key] = eval(jd_frame[key])
                 score = get_mse(angle_person=webcam_angle, angle_Jdance=jd_frame)
-                print(frame_idx," ",score)
+                # print(frame_idx," ",score)
                 scores.append(score)
                 # temp = input("Press any key to continue...")
-
             frame_idx+=1
-            cv2.imshow('MoveNet Lightning', frame)
-            outputFrame = frame.copy()
+            # cv2.imshow('MoveNet Lightning', frame)
+            with lock:
+                print("I have the lock")
+                outputFrame = frame.copy()
+    vs.stop()
         
     # cap.release()
     # cv2.destroyAllWindows()
