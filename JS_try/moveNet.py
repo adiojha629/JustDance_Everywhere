@@ -1,10 +1,18 @@
+from tkinter.messagebox import NO
 import tensorflow as tf
 import numpy as np 
 from matplotlib import pyplot as plt
 import pandas as pd
 import cv2
 import time
+from imutils.video import VideoStream
 
+
+# vs, outputFrame, lock
+outputFrame = None
+lock = None
+check = 1
+# temp2 = input("press any key to continue")
 interpreter = tf.lite.Interpreter(model_path='lite-model_movenet_singlepose_lightning_3.tflite')
 interpreter.allocate_tensors()
 
@@ -210,26 +218,30 @@ def Count_Down(num_seconds):
 
 
 def get_web():
-
+    # global 
     # sleep and count down  
-    Count_Down(num_seconds=10)
+    # Count_Down(num_seconds=0)
     
-    cap = cv2.VideoCapture(0)
+    # cap = cv2.VideoCapture(0)
     frame_idx = 0 
+    vs = VideoStream(src=0).start()
     happy_short_data = pd.read_csv(
         'Angles CSV/angles.csv')
     happy_short_data = happy_short_data.drop(['Unnamed: 0'], axis=1)
     print(happy_short_data.head())
     num_points = len(happy_short_data) # number of "frame_idx//30"'s we have
     scores = []
-    while cap.isOpened():
-        ret, frame = cap.read()  # fram- image
-        if ret:
+    while True:
+        frame = vs.read()
+        # print("asdf",frame.shape)
+        # ret, frame = cap.read()  # fram- image
+        # if ret:  modification ??
+        if True:
             frame = cv2.resize(frame, (640, 480), interpolation=cv2.INTER_LINEAR)
             if len(scores):# display score if we have one
                 frame = cv2.putText(frame,"MSE: "+str(scores[-1]),(450,450),fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                                 fontScale=1,color=(255,255,255),thickness=2,lineType=cv2.LINE_AA)
-            cv2.imshow('MoveNet Lightning', frame)
+            # cv2.imshow('MoveNet Lightning', frame)
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
 
@@ -240,9 +252,12 @@ def get_web():
                 #float32 tensor of shape: 192x192x3. Channels order: RGB with values in [0, 255].
                 #reshape
                 img = frame.copy()
+                img = np.squeeze(img)
+                
                 # for lignting resize to 192
                 # img = tf.image.resize_with_pad(np.expand_dims(img, axis=0), 256, 256)
                 img = tf.image.resize_with_pad(np.expand_dims(img, axis=0), 192, 192)
+                # print("kjlkasdf", img.shape)
                 
                 input_image = tf.cast(img, dtype=tf.float32)
                 # setup input and output
@@ -261,20 +276,20 @@ def get_web():
 
                 # print(keypoints_with_scores)
                 # draw_connections(frame, keypoints_with_scores, EDGES, 0.2)
-                # draw_keypoints(frame, keypoints_with_scores, 0.2)
+                draw_keypoints(frame, keypoints_with_scores, 0.2)
                 # get the angles in dictionary format
                 webcam_angle = get_angles_moveNet(keypoints)
                 jd_frame = happy_short_data.iloc[frame_idx//30].to_dict()
                 for key in jd_frame.keys():# [2,3]
                     jd_frame[key] = eval(jd_frame[key])
-                score = get_mse(angle_person=webcam_angle, angle_Jdance=jd_frame, body_part = 'upper_body', 
-                    joint_names = {
-                        'upper_body':['left_shoulder','right_shoulder','left_elbow','right_elbow'],#,'left_neck','right_neck'],
-                        'lower_body':['left_knee','right_knee']
-                            })
+                score = get_mse(angle_person=webcam_angle, angle_Jdance=jd_frame)
                 print(frame_idx," ",score)
                 scores.append(score)
+                # temp = input("Press any key to continue...")
+
             frame_idx+=1
+            cv2.imshow('MoveNet Lightning', frame)
+            outputFrame = frame.copy()
         
     # cap.release()
     # cv2.destroyAllWindows()

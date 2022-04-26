@@ -1,6 +1,28 @@
+# reference:https://pyimagesearch.com/2019/09/02/opencv-stream-video-to-web-browser-html-page/ 
+from imutils.video import VideoStream
+from flask import Response
 from flask import Flask, render_template
-from moveNet import get_web
+import threading
+import argparse
+import datetime
+import imutils
+import time
+import cv2
+import moveNet
+# from moveNet import outputFrame, lock, vs, check,  get_web
+
+print(moveNet.check)
+
+
 app = Flask(__name__)
+
+outputFrame = None
+lock = threading.Lock()
+
+
+# initialize the video stream 
+# time.sleep(2.0)
+
 
 # webpage to connect
 @app.route('/')
@@ -11,7 +33,7 @@ def main():
 
 @app.route('/camera/')
 def camera():
-    get_web()
+    moveNet.get_web()
     return ""
     # return render_template("video.html")
  
