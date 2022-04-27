@@ -10,6 +10,8 @@ from imutils.video import VideoStream
 
 
 # vs, outputFrame, lock
+global outputFrame
+global lock
 outputFrame = None
 lock = threading.Lock()
 check = 1
@@ -218,12 +220,19 @@ def Count_Down(num_seconds):
     cv2.destroyWindow("CountDown!")
 
 
+def fack():
+    while True:
+        print("fack has the lock")
+        # with lock:
+        #     print("I have the lock")
+
 def get_web():
     # global 
     # sleep and count down  
     # Count_Down(num_seconds=0)
     
     # cap = cv2.VideoCapture(0)
+    global outputFrame, lock
     frame_idx = 0 
     vs = VideoStream(src=0).start()
     happy_short_data = pd.read_csv(
@@ -276,7 +285,7 @@ def get_web():
 
                 # print(keypoints_with_scores)
                 # draw_connections(frame, keypoints_with_scores, EDGES, 0.2)
-                draw_keypoints(frame, keypoints_with_scores, 0.2)
+                # draw_keypoints(frame, keypoints_with_scores, 0.2)
                 # get the angles in dictionary format
                 webcam_angle = get_angles_moveNet(keypoints)
                 jd_frame = happy_short_data.iloc[frame_idx//30].to_dict()
@@ -289,7 +298,8 @@ def get_web():
             frame_idx+=1
             # cv2.imshow('MoveNet Lightning', frame)
             with lock:
-                print("I have the lock")
+                # print("I have the lock")
+                # print(frame)
                 outputFrame = frame.copy()
     vs.stop()
         
