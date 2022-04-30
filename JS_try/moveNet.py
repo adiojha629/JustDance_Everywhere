@@ -58,44 +58,49 @@ def get_mse(angle_person, angle_Jdance, body_part = 'upper_body',
                 'upper_body':['left_shoulder','right_shoulder','left_elbow','right_elbow'],#,'left_neck','right_neck'],
                 'lower_body':['left_knee','right_knee']
                     }): 
-  '''Get MSE for upper/lower body
-  params:
-  angle_person : feature_vector
-  angle_Jdance : feature_vector
-  body_part : 'upper_body' or 'lower_body', indicate which part you want to compute mse for 
+#   '''Get MSE for upper/lower body
+#   params:
+#   angle_person : feature_vector
+#   angle_Jdance : feature_vector
+#   body_part : 'upper_body' or 'lower_body', indicate which part you want to compute mse for 
 
-  return mse 
+#   return mse 
 
-  Sample code:
-  >>> f1 = open('person.json')
-  >>> data1 = json.load(f1)
-  >>> f2 = open('JustDance.json')
-  >>> data2 = json.load(f2)
-  >>> angle_person = get_angles(data1)
-  >>> angle_Jdance = get_angles(data2)
-  >>> get_mse(angle_person,angle_person)
-    will return MSE for upper body
+#   Sample code:
+#    f1 = open('person.json')
+#    data1 = json.load(f1)
+#    f2 = open('JustDance.json')
+#    data2 = json.load(f2)
+#    angle_person = get_angles(data1)
+#    angle_Jdance = get_angles(data2)
+#    get_mse(angle_person,angle_person)
+#     will return MSE for upper body
 
-  >>>get_mse(angle_person, angle_person, body_part = 'lower_body')
-    will return MSE for lower body
+#   get_mse(angle_person, angle_person, body_part = 'lower_body')
+#     will return MSE for lower body'''
+    sum = 0
+    num_of_valid_angle = 0
+    penalty = 1/4* 180**2
+    # print("Beginning")
+    for joint_name in joint_names[body_part]:
+    # joint_name = joint_names[body_part][0]
+        # print("Before")
+        # print(angle_person)
+        _,an_angle_person = angle_person[joint_name]
+        # print("After")
+        # print(an_angle_person)
+        _,an_angle_Jdance = angle_Jdance[joint_name]
 
-  '''
-
-  sum = 0
-  num_of_valid_angle = 0
-
-  for joint_name in joint_names[body_part]:
-    _,angle_person = angle_person[joint_name]
-    _,angle_Jdance = angle_Jdance[joint_name]
-
-    if angle_person != 9999 and angle_Jdance != 9999 : # If either of the angle is invalid, we will not compute mse
-        num_of_valid_angle +=1
-        sum += (angle_person-angle_Jdance)**2
+        if an_angle_person != 9999 and an_angle_Jdance != 9999 : # If either of the angle is invalid, we will not compute mse
+            num_of_valid_angle +=1
+            sum += (an_angle_person-an_angle_Jdance)**2
+        else:
+            sum += penalty
 
     if num_of_valid_angle ==0: # if no angle valid, we will return infinity
-      return np.Infinity
-
-    return sum/num_of_valid_angle
+        return np.Infinity
+    # print("End")
+    return sum/4
 
 
 def draw_keypoints(frame, keypoints, confidence):
@@ -153,10 +158,13 @@ def get_angles_moveNet(data):
         confidence_1 = coords_np[index[0]][2]
         confidence_2 = coords_np[index[1]][2]
         confidence_3 = coords_np[index[2]][2]
-        if 0 in [confidence_1, confidence_2, confidence_3]:
-            print("Angle Won't make Sense")
-            angle = 9999  # we'll check for this value when calculating mse
-        else:
+        angle = 0
+        for c in [confidence_1, confidence_2, confidence_3]:
+            if c <= 0.02:
+                print("Angle Won't make Sense")
+                angle = 9999  # we'll check for this value when calculating mse
+                break
+        if angle!=9999:
             angle = find_angle(pt1, pt2, pt3)
 
         # angle = find_angle(pt1,pt2,pt3)
@@ -221,6 +229,46 @@ def Count_Down(num_seconds):
 
 
 
+
+def get_score(angle_person, angle_Jdance, body_part = 'upper_body',
+            joint_names = {
+                'upper_body':['left_shoulder','right_shoulder','left_elbow','right_elbow'],
+                'lower_body':['left_knee','right_knee']},
+              thresholds = [0.9, 0.8, 0.6, 0.4, 0.1],score_rate = 0.001):
+    mse = get_mse(angle_person, angle_Jdance, body_part,
+            joint_names)
+    score = 1- np.tanh(score_rate*mse)
+    # 0.9 Perfect, 0.8 Super, 0.6 Good, 0.4 Nice, 0.1 Ok, 0 X
+    assert(len(thresholds) == 5)
+    if score >= thresholds[0]:
+      return score, " PERFECT! "
+    elif score >= thresholds[1]:
+      return score, "SUPER! "
+    elif score >= thresholds[2]:
+      return score, "GOOD! "
+    elif score >= thresholds[3]:
+      return score, "NICE! "
+    elif score >= thresholds[4]:
+      return score, "OK "
+    else:
+      return score, "X"
+def get_final_score(scores,
+              thresholds = [0.9, 0.8, 0.6, 0.4, 0.1]):
+    final_score = np.mean(scores)
+    assert(len(thresholds) == 5)
+    if final_score >= thresholds[0]:
+      return  " SSS "
+    elif final_score >= thresholds[1]:
+      return " SS "
+    elif final_score >= thresholds[2]:
+      return " S "
+    elif final_score >= thresholds[3]:
+      return  "A "
+    elif final_score >= thresholds[4]:
+      return " B "
+    else:
+      return  " C "
+
 def get_web():
     # global 
     # sleep and count down  
@@ -232,20 +280,29 @@ def get_web():
     # https://www.programcreek.com/python/example/114226/imutils.video.VideoStream
     vs = VideoStream(src=0,framerate=frame_p_sec).start()
     happy_short_data = pd.read_csv(
-        'Angles CSV/Adi_Openpose_angles.csv')
+        'Angles CSV/angles.csv')
     happy_short_data = happy_short_data.drop(['Unnamed: 0'], axis=1)
     # print(happy_short_data.head())
     num_points = len(happy_short_data) # number of "frame_idx//frame_p_sec"'s we have
     scores = []
     start_time = time.time()
     start = False
-    json_index = 0
+    json_index = 1
 
     # assert num_points == 60
     print("Num Points \n\n")
     print(num_points)
     last_time = 0
     # while frame_idx//30 < num_points:
+    while not start:
+        frame = vs.read()
+        with lock:
+            # print("I have the lock")
+            # print(frame)
+            outputFrame = frame.copy()
+        if not start and time.time() - start_time >= 5:
+            start = True
+
     # adi = input('kevin')
     while json_index < num_points:
         # time.sleep(60.0 - ((time.time() - start_time) % 60.0))
@@ -254,9 +311,9 @@ def get_web():
         # ret, frame = cap.read()  # fram- image
         # if ret:  modification ??
         frame = cv2.resize(frame, (640, 480), interpolation=cv2.INTER_LINEAR)
-        # frame = cv2.flip(frame, 1)
+        frame = cv2.flip(frame, 1)
         if len(scores):# display score if we have one
-            frame = cv2.putText(frame,"MSE: "+str(scores[-1]),(450,450),fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+            frame = cv2.putText(frame,str(scores[-1]),(450,450),fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                             fontScale=1,color=(255,255,255),thickness=2,lineType=cv2.LINE_AA)
         # cv2.imshow('MoveNet Lightning', frame)
         if cv2.waitKey(10) & 0xFF == ord('q'):
@@ -306,14 +363,15 @@ def get_web():
             jd_frame = happy_short_data.iloc[json_index].to_dict()
             for key in jd_frame.keys():# [2,3]
                 jd_frame[key] = eval(jd_frame[key])
-            score = get_mse(angle_person=webcam_angle, angle_Jdance=jd_frame)
+            # score = get_mse(angle_person=webcam_angle, angle_Jdance=jd_frame)
+            score, score_str = get_score(angle_person=webcam_angle, angle_Jdance=jd_frame)
             # score = 1 - np.tanh(0.001*score)
             # print(frame_idx," ",score)
-            scores.append(score)
+            scores.append(score_str)
             json_index+=1
             # temp = input("Press any key to continue...")
         
-        frame_idx+=1
+        # frame_idx+=1
         # cv2.imshow('MoveNet Lightning', frame)
         with lock:
             # print("I have the lock")
