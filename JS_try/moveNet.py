@@ -225,88 +225,111 @@ def get_web():
     # global 
     # sleep and count down  
     # cap = cv2.VideoCapture(0)
-    
     global outputFrame, lock
+    frame_p_sec = 30
     frame_idx = 0 
-    vs = VideoStream(src=0).start()
+    # Setting frame rate idea from here:
+    # https://www.programcreek.com/python/example/114226/imutils.video.VideoStream
+    vs = VideoStream(src=0,framerate=frame_p_sec).start()
     happy_short_data = pd.read_csv(
-        'Angles CSV/angles.csv')
+        'Angles CSV/Adi_Openpose_angles.csv')
     happy_short_data = happy_short_data.drop(['Unnamed: 0'], axis=1)
     # print(happy_short_data.head())
-    num_points = len(happy_short_data) # number of "frame_idx//30"'s we have
+    num_points = len(happy_short_data) # number of "frame_idx//frame_p_sec"'s we have
     scores = []
     start_time = time.time()
     start = False
+    json_index = 0
 
-    while frame_idx//30 <= num_points:
-        frame = vs.read()
+    # assert num_points == 60
+    print("Num Points \n\n")
+    print(num_points)
+    last_time = 0
+    # while frame_idx//30 < num_points:
+    # adi = input('kevin')
+    while json_index < num_points:
+        # time.sleep(60.0 - ((time.time() - start_time) % 60.0))
+        frame = vs.read()   
         # print("asdf",frame.shape)
         # ret, frame = cap.read()  # fram- image
         # if ret:  modification ??
-        if True:
-            frame = cv2.resize(frame, (640, 480), interpolation=cv2.INTER_LINEAR)
-            frame = cv2.flip(frame, 1)
-            if len(scores):# display score if we have one
-                frame = cv2.putText(frame,"MSE: "+str(scores[-1]),(450,450),fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                                fontScale=1,color=(255,255,255),thickness=2,lineType=cv2.LINE_AA)
-            # cv2.imshow('MoveNet Lightning', frame)
-            if cv2.waitKey(10) & 0xFF == ord('q'):
-                break
-            if not start and time.time() - start_time >= 10:
-                start = True
-                # print("Start!")
+        frame = cv2.resize(frame, (640, 480), interpolation=cv2.INTER_LINEAR)
+        # frame = cv2.flip(frame, 1)
+        if len(scores):# display score if we have one
+            frame = cv2.putText(frame,"MSE: "+str(scores[-1]),(450,450),fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                            fontScale=1,color=(255,255,255),thickness=2,lineType=cv2.LINE_AA)
+        # cv2.imshow('MoveNet Lightning', frame)
+        if cv2.waitKey(10) & 0xFF == ord('q'):
+            break
+        if not start and time.time() - start_time >= 10:
+            start = True
+            # print("Start!")
 
-            # check if we should run the network
-            if frame_idx % 30 == 0 and start:
-                print("frame_idx:", frame_idx)
-                print("time diff:", time.time()- start_time)
-                # do network stuff
-                #input: A frame of video or an image, represented as an
-                #float32 tensor of shape: 192x192x3. Channels order: RGB with values in [0, 255].
-                #reshape
-                img = frame.copy()
-                img = np.squeeze(img)
-                
-                # for lignting resize to 192
-                # img = tf.image.resize_with_pad(np.expand_dims(img, axis=0), 256, 256)
-                img = tf.image.resize_with_pad(np.expand_dims(img, axis=0), 192, 192)
-                # print("kjlkasdf", img.shape)
-                
-                input_image = tf.cast(img, dtype=tf.float32)
-                # setup input and output
-                input_details = interpreter.get_input_details()
-                output_details = interpreter.get_output_details()
+        # check if we should run the network
+        # if frame_idx % 30 == 0 and start:
+        
+        if time.time() - last_time >= 0.99 and start: # units are seconds
+            last_time = time.time()
+            print("frame_idx:", frame_idx)
+            print("time diff:", time.time()- start_time)
+            # start_time = time.time()
+            # do network stuff
+            #input: A frame of video or an image, represented as an
+            #float32 tensor of shape: 192x192x3. Channels order: RGB with values in [0, 255].
+            #reshape
+            img = frame.copy()
+            img = np.squeeze(img)
+            
+            # for lignting resize to 192
+            # img = tf.image.resize_with_pad(np.expand_dims(img, axis=0), 256, 256)
+            img = tf.image.resize_with_pad(np.expand_dims(img, axis=0), 192, 192)
+            # print("kjlkasdf", img.shape)
+            
+            input_image = tf.cast(img, dtype=tf.float32)
+            # setup input and output
+            input_details = interpreter.get_input_details()
+            output_details = interpreter.get_output_details()
 
-                # make predictions
-                interpreter.set_tensor(
-                    input_details[0]['index'], np.array(input_image))
-                interpreter.invoke()
-                keypoints_with_scores = interpreter.get_tensor(
-                    output_details[0]["index"])
-                keypoints = np.squeeze(keypoints_with_scores)
+            # make predictions
+            interpreter.set_tensor(
+                input_details[0]['index'], np.array(input_image))
+            interpreter.invoke()
+            keypoints_with_scores = interpreter.get_tensor(
+                output_details[0]["index"])
+            keypoints = np.squeeze(keypoints_with_scores)
 
-                # print(keypoints_with_scores)
-                draw_connections(frame, keypoints_with_scores, EDGES, 0.2)
-                draw_keypoints(frame, keypoints_with_scores, 0.2)
-                # get the angles in dictionary format
-                webcam_angle = get_angles_moveNet(keypoints)
-                jd_frame = happy_short_data.iloc[frame_idx//30].to_dict()
-                for key in jd_frame.keys():# [2,3]
-                    jd_frame[key] = eval(jd_frame[key])
-                score = get_mse(angle_person=webcam_angle, angle_Jdance=jd_frame)
-                # print(frame_idx," ",score)
-                scores.append(score)
-                # temp = input("Press any key to continue...")
-           
-            frame_idx+=1
-            # cv2.imshow('MoveNet Lightning', frame)
-            with lock:
-                # print("I have the lock")
-                # print(frame)
-                outputFrame = frame.copy()
+            # print(keypoints_with_scores)
+            draw_connections(frame, keypoints_with_scores, EDGES, 0.2)
+            draw_keypoints(frame, keypoints_with_scores, 0.2)
+            # get the angles in dictionary format
+            webcam_angle = get_angles_moveNet(keypoints)
+            jd_frame = happy_short_data.iloc[json_index].to_dict()
+            for key in jd_frame.keys():# [2,3]
+                jd_frame[key] = eval(jd_frame[key])
+            score = get_mse(angle_person=webcam_angle, angle_Jdance=jd_frame)
+            # score = 1 - np.tanh(0.001*score)
+            # print(frame_idx," ",score)
+            scores.append(score)
+            json_index+=1
+            # temp = input("Press any key to continue...")
+        
+        frame_idx+=1
+        # cv2.imshow('MoveNet Lightning', frame)
+        with lock:
+            # print("I have the lock")
+            # print(frame)
+            outputFrame = frame.copy()
+        
             
     print("The end")
     vs.stop()
+    # scores = np.array(scores)
+    # print(scores)
+    # scores = 1 - np.tanh(0.001*scores)
+    # print(scores)
+    # plt.hist(scores)
+    # plt.show()
+
     
         
     # cap.release()
