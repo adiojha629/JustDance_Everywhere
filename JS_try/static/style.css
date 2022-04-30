@@ -1,0 +1,60 @@
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    background-color: #686de0;
+}
+
+h1{
+    z-index: 1;
+}
+
+box{
+    height: 90vh;
+    margin: 0 auto;
+    position: relative;
+}
+
+video {
+    /* width: vw; */
+    z-index: -2;
+    /* top:10vh; */
+    /* object-fit: cover;
+    position: fixed; */ 
+    height: 90vh;
+    display: block;
+    margin: 0 auto;
+    /* top: 0;
+    left: 0; */
+}
+
+
+.item1 {
+    position: absolute;
+    top: 15vh;
+    margin: 0 auto;
+    left: 5vw;
+    /* background-color: #212; */
+    /* border: 2px solid #000; */
+    /* height: 100px; */
+}
+
+.start_button{
+    position: absolute;
+    top: 5vh;
+    left: 45vw;
+    width: auto;
+}
+
+/* position match video */
+/* #stream {
+    position: relative;
+} */
+
+/* -----------------------------Button--------------------------------- */
+/*  */
+
+
+

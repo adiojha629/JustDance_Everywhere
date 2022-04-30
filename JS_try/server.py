@@ -9,7 +9,7 @@ import imutils
 import time
 import cv2
 # import moveNet
-from moveNet import lock, check, get_web, fack
+from moveNet import lock, check, get_web
 import moveNet
 # import moveNet
 print(check)
@@ -40,6 +40,8 @@ def camera():
     return render_template('camera.html')
     # return render_template("video.html")
 
+
+
 @app.route("/video_feed/")
 def video_feed():
 	# return the response generated along with the specific media
@@ -47,6 +49,16 @@ def video_feed():
   print("in video_feed")
   return Response(generate(),
 		mimetype = "multipart/x-mixed-replace; boundary=frame")
+
+
+@app.route("/video_only/")
+def video_only():
+	# return the response generated along with the specific media
+	# type (mime type)
+  print("in video_only")
+  return Response(generate(),
+		mimetype = "multipart/x-mixed-replace; boundary=frame")
+
  
 
 @app.route('/my-link/')
@@ -61,12 +73,11 @@ def generate():
     # loop over frames from the output stream
     t = threading.Thread(target=get_web)
     t.daemon = True
-    print("After thread")
+    # print("After thread")
     t.start()
     # adi = input("Enter")
     while True:
         # wait until the lock is acquired
-        print("outside")
         with lock:
             # check if the output frame is available, otherwise skip
             # the iteration of the loop
@@ -83,11 +94,6 @@ def generate():
         # cv2.imshow("Frame", outputFrame)
         yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
               bytearray(encodedImage) + b'\r\n')
-
-
-
-
-
 
 
 

@@ -1,12 +1,67 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
+
 
 <head>
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     <title>JustDance</title>
 </head>
 
-<body>
-    <h1>Pi Video Surveillance</h1>
-    <img src="{{ url_for('video_feed')}}">
-</body>
 
+
+<body>
+    <!-- 10 seconds count down -->
+    <h1> The game will begin in <span id="countdowntimer">10 </span> Seconds</h1>
+
+    
+    <input class="start_button" onclick="playGame()" type="button" value="play Game"></input>
+   
+    <!-- <h1>JustDance</h1> -->
+    <div class="box">
+        <video id="justdance_video" controls="controls">
+            <!-- change source -->
+            <source src="{{ url_for('static', filename='dance/justdance_Levitating .mp4') }}" type="video/mp4">
+        </video>
+        
+        <div class="item1">
+            <img id="stream" height="200px">
+            <!-- <img id="stream" height="200px" src="video_feed()"> -->
+        </div>
+    </div>
+   
+
+
+
+    <script type="text/javascript">
+        var timeleft = 10;
+        var vid = document.getElementById("justdance_video");
+        var stream = document.getElementById("stream");
+        
+        function playGame() {
+            stream.src = "{{ url_for('video_feed')}}";
+            var downloadTimer = setInterval(function () {
+                timeleft--;
+                document.getElementById("countdowntimer").textContent = timeleft;
+                if (timeleft <= 0)
+                    // vid.play();
+                    clearInterval(downloadTimer);
+            }, 1000); 
+            setTimeout(function () {
+                vid.play();
+            }, 10000);
+        }
+        // play video after 10 seconds
+        // function playVid() {
+                
+        //     }
+
+    </script>
+
+
+</body>
 </html>
+
+

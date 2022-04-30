@@ -220,18 +220,12 @@ def Count_Down(num_seconds):
     cv2.destroyWindow("CountDown!")
 
 
-def fack():
-    while True:
-        print("fack has the lock")
-        # with lock:
-        #     print("I have the lock")
 
 def get_web():
     # global 
     # sleep and count down  
-    # Count_Down(num_seconds=0)
-    
     # cap = cv2.VideoCapture(0)
+    
     global outputFrame, lock
     frame_idx = 0 
     vs = VideoStream(src=0).start()
@@ -241,22 +235,31 @@ def get_web():
     # print(happy_short_data.head())
     num_points = len(happy_short_data) # number of "frame_idx//30"'s we have
     scores = []
-    while True:
+    start_time = time.time()
+    start = False
+
+    while frame_idx//30 <= num_points:
         frame = vs.read()
         # print("asdf",frame.shape)
         # ret, frame = cap.read()  # fram- image
         # if ret:  modification ??
         if True:
             frame = cv2.resize(frame, (640, 480), interpolation=cv2.INTER_LINEAR)
+            frame = cv2.flip(frame, 1)
             if len(scores):# display score if we have one
                 frame = cv2.putText(frame,"MSE: "+str(scores[-1]),(450,450),fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                                 fontScale=1,color=(255,255,255),thickness=2,lineType=cv2.LINE_AA)
             # cv2.imshow('MoveNet Lightning', frame)
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
+            if not start and time.time() - start_time >= 10:
+                start = True
+                # print("Start!")
 
             # check if we should run the network
-            if frame_idx % 30 == 0 and frame_idx//30 < num_points:
+            if frame_idx % 30 == 0 and start:
+                print("frame_idx:", frame_idx)
+                print("time diff:", time.time()- start_time)
                 # do network stuff
                 #input: A frame of video or an image, represented as an
                 #float32 tensor of shape: 192x192x3. Channels order: RGB with values in [0, 255].
@@ -282,10 +285,9 @@ def get_web():
                     output_details[0]["index"])
                 keypoints = np.squeeze(keypoints_with_scores)
 
-
                 # print(keypoints_with_scores)
-                # draw_connections(frame, keypoints_with_scores, EDGES, 0.2)
-                # draw_keypoints(frame, keypoints_with_scores, 0.2)
+                draw_connections(frame, keypoints_with_scores, EDGES, 0.2)
+                draw_keypoints(frame, keypoints_with_scores, 0.2)
                 # get the angles in dictionary format
                 webcam_angle = get_angles_moveNet(keypoints)
                 jd_frame = happy_short_data.iloc[frame_idx//30].to_dict()
@@ -295,18 +297,24 @@ def get_web():
                 # print(frame_idx," ",score)
                 scores.append(score)
                 # temp = input("Press any key to continue...")
+           
             frame_idx+=1
             # cv2.imshow('MoveNet Lightning', frame)
             with lock:
                 # print("I have the lock")
                 # print(frame)
                 outputFrame = frame.copy()
+            
+    print("The end")
     vs.stop()
+    
         
     # cap.release()
     # cv2.destroyAllWindows()
 
 
+
+# countdown for 10 seconds
 
 # def get_web():
 #     cap = cv2.VideoCapture(0)
