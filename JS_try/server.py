@@ -29,7 +29,9 @@ app = Flask(__name__)
 # webpage to connect
 @app.route('/')
 def main():
-    return render_template('main.html')
+    print ('camera got clicked!')
+    return render_template('camera.html')
+    # return render_template('main.html')
 
     # return "This is the homepage"
 

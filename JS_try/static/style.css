@@ -4,7 +4,7 @@
 
 
 body {
-    background-color: #686de0;
+    background-color: #dff9fb;
 }
 
 h1{
@@ -53,8 +53,40 @@ video {
     position: relative;
 } */
 
-/* -----------------------------Button--------------------------------- */
+/* -----------------------------Button --------------------------------- */
 /*  */
+
+.glightbox_video {
+    z-index: 10;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.outer_circle {
+    stroke-width: 3;
+    stroke-dasharray: 410;
+    stroke-dashoffset: 0;
+    stroke-linecap: square;
+    transition: all .4s ease-out;
+}
+
+.glightbox_video:hover .outer_circle {
+    stroke-dashoffset: 410;
+    transition: stroke .7s .4s ease-out, stroke-dashoffset .4s ease-out
+}
+
+.glightbox_video:hover .inner-circle {
+    fill: #BF2428;
+    transition: fill .4s .3s ease-out;
+
+}
+
+.glightbox_video:hover .play {
+    fill: white;
+    transition: fill .4s .3s ease-out;
+}
 
 
 

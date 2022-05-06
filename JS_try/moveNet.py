@@ -1,4 +1,4 @@
-from tkinter.messagebox import NO
+# from tkinter.messagebox import NO
 import tensorflow as tf
 import numpy as np 
 from matplotlib import pyplot as plt
@@ -80,7 +80,7 @@ def get_mse(angle_person, angle_Jdance, body_part = 'upper_body',
 #     will return MSE for lower body'''
     sum = 0
     num_of_valid_angle = 0
-    penalty = 1/4* 180**2
+    penalty = 1/10* 180**2
     # print("Beginning")
     for joint_name in joint_names[body_part]:
     # joint_name = joint_names[body_part][0]
@@ -234,14 +234,15 @@ def get_score(angle_person, angle_Jdance, body_part = 'upper_body',
             joint_names = {
                 'upper_body':['left_shoulder','right_shoulder','left_elbow','right_elbow'],
                 'lower_body':['left_knee','right_knee']},
-              thresholds = [0.9, 0.8, 0.6, 0.4, 0.1],score_rate = 0.001):
+              thresholds = [0.85, 0.8, 0.6, 0.3, 0.15],score_rate = 0.0005):  #or 0.9 for perfect
     mse = get_mse(angle_person, angle_Jdance, body_part,
             joint_names)
     score = 1- np.tanh(score_rate*mse)
+    # score = 1 - mse/(45**2)
     # 0.9 Perfect, 0.8 Super, 0.6 Good, 0.4 Nice, 0.1 Ok, 0 X
     assert(len(thresholds) == 5)
     if score >= thresholds[0]:
-      return score, " PERFECT! "
+      return score, "PERFECT! "
     elif score >= thresholds[1]:
       return score, "SUPER! "
     elif score >= thresholds[2]:
@@ -257,7 +258,7 @@ def get_final_score(scores,
     final_score = np.mean(scores)
     assert(len(thresholds) == 5)
     if final_score >= thresholds[0]:
-      return  " SSS "
+      return  "SSS "
     elif final_score >= thresholds[1]:
       return " SS "
     elif final_score >= thresholds[2]:
@@ -294,14 +295,14 @@ def get_web():
     print(num_points)
     last_time = 0
     # while frame_idx//30 < num_points:
-    while not start:
-        frame = vs.read()
-        with lock:
-            # print("I have the lock")
-            # print(frame)
-            outputFrame = frame.copy()
-        if not start and time.time() - start_time >= 5:
-            start = True
+    # while not start:
+    #     frame = vs.read()
+    #     with lock:
+    #         # print("I have the lock")
+    #         # print(frame)
+    #         outputFrame = frame.copy()
+    #     if not start and time.time() - start_time >= 5:
+    #         start = True
 
     # adi = input('kevin')
     while json_index < num_points:
@@ -313,8 +314,8 @@ def get_web():
         frame = cv2.resize(frame, (640, 480), interpolation=cv2.INTER_LINEAR)
         frame = cv2.flip(frame, 1)
         if len(scores):# display score if we have one
-            frame = cv2.putText(frame,str(scores[-1]),(450,450),fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                            fontScale=1,color=(255,255,255),thickness=2,lineType=cv2.LINE_AA)
+            frame = cv2.putText(frame,str(scores[-1]),(350,450),fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                            fontScale=2,color=(0,255,0),thickness=4,lineType=cv2.LINE_AA)
         # cv2.imshow('MoveNet Lightning', frame)
         if cv2.waitKey(10) & 0xFF == ord('q'):
             break

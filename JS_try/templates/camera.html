@@ -16,8 +16,21 @@
     <!-- 10 seconds count down -->
     <h1> The game will begin in <span id="countdowntimer">10 </span> Seconds</h1>
 
+
+    <a onclick="playGame()" type="button"
+        class="glightbox_video" id = "playButton">
+        <svg width="131" height="131" viewBox="0 0 131 131" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path class="inner-circle"
+                d="M65 21C40.1488 21 20 41.1488 20 66C20 90.8512 40.1488 111 65 111C89.8512 111 110 90.8512 110 66C110 41.1488 89.8512 21 65 21Z"
+                fill="white"></path>
+            <circle class="outer_circle" cx="65.5" cy="65.5" r="64" stroke="white"></circle>
+            <path class="play" fill-rule="evenodd" clip-rule="evenodd" d="M60 76V57L77 66.7774L60 76Z" fill="#BF2428">
+            </path>
+        </svg>
+    </a>
+
     
-    <input class="start_button" onclick="playGame()" type="button" value="play Game"></input>
+    <!-- <input class="start_button" onclick="playGame()" type="button" value="play Game"></input> -->
    
     <!-- <h1>JustDance</h1> -->
     <div class="box">
@@ -28,7 +41,7 @@
         </video>
         
         <div class="item1">
-            <img id="stream" height="200px">
+            <img id="stream" height="300px">
             <!-- <img id="stream" height="200px" src="video_feed()"> -->
         </div>
     </div>
@@ -40,9 +53,13 @@
         var timeleft = 10;
         var vid = document.getElementById("justdance_video");
         var stream = document.getElementById("stream");
+        var playButton = document.getElementById("playButton");
+
+        
         
         function playGame() {
             stream.src = "{{ url_for('video_feed')}}";
+            playButton.style.display = "none";
             var downloadTimer = setInterval(function () {
                 timeleft--;
                 document.getElementById("countdowntimer").textContent = timeleft;
