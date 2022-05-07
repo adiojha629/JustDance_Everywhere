@@ -1,6 +1,5 @@
 import tensorflow as tf
 import numpy as np 
-from matplotlib import pyplot as plt
 import pandas as pd
 import threading
 import cv2
@@ -13,7 +12,7 @@ global lock
 outputFrame = None
 lock = threading.Lock()
 
-interpreter = tf.lite.Interpreter(model_path='.\lite-model_movenet_singlepose_lightning_3.tflite')
+interpreter = tf.lite.Interpreter(model_path= 'static\lite-model_movenet_singlepose_lightning_3.tflite')
 interpreter.allocate_tensors()
 
 
