@@ -251,10 +251,10 @@ def get_web():
   frame_idx = 0 
   vs = VideoStream(src=0,framerate=frame_p_sec).start()
   # the openpose angle data. Change the source is you want to play another dance
-  happy_short_data = pd.read_csv(
+  justDance_data = pd.read_csv(
       'Angles CSV/angles.csv')
-  happy_short_data = happy_short_data.drop(['Unnamed: 0'], axis=1)
-  num_points = len(happy_short_data) # number of "frame_idx//frame_p_sec"'s we have
+  justDance_data = justDance_data.drop(['Unnamed: 0'], axis=1)
+  num_points = len(justDance_data) # number of "frame_idx//frame_p_sec"'s we have
   scores = []
   start_time = time.time()
   start = False
@@ -304,7 +304,7 @@ def get_web():
 
           # get the angles in dictionary format
           webcam_angle = get_angles_moveNet(keypoints)
-          jd_frame = happy_short_data.iloc[json_index].to_dict()
+          jd_frame = justDance_data.iloc[json_index].to_dict()
 
           # get the score for the frame
           for key in jd_frame.keys():# [2,3]
