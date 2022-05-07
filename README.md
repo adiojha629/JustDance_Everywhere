@@ -18,30 +18,30 @@ After the website show up, click the button at the middle of the justdance video
 Due to github size limit, currently there’s only one demo dance. If you want to try other dance, download the video from the following google drive https://drive.google.com/drive/folders/1tzGKYIqvO4bdjpQxuxs3x8DDdH4sMVVp?usp=sharing .
 
 Place the  dance.mp4 in  \JustDance_Everywhere\JSD_website\static\ .Change the dance video in \JustDance_Everywhere\JSD_website\camera.html to the dance you want to play.
-
+```python
 Line 36: <source src="{{ url_for('static', filename='justdance_happy_short.mp4') }}" 
-
+```
 Also change the angle data in \JustDance_Everywhere\JSD_website\moveNet.py to the corresponding angle.csv. Then run the python .\server.py to start your New dance! 
 
 Example:
-
+```python
 Line 254: justDance_data = pd.read_csv( 'Angles CSV2/ JustDance_Levitating_angle.csv') 
-
+```
 
 
 ### [JSD_website](https://github.com/adiojha629/JustDance_Everywhere/tree/main/JSD_website)
 
 This directory includes all the codes and the datasource for the website.
 
-JSD_website/static: store the movenet model, dance video and the css file.
+    JSD_website/static: store the movenet model, dance video and the css file.
 
-JSD_website/templates: the html page for the website.
+    JSD_website/templates: the html page for the website.
 
-JSD_website/Angle_CSV(2): the angle data of the JustDance video (Captured using OpenPose).
+    JSD_website/Angle_CSV(2): the angle data of the JustDance video (Captured using OpenPose).
 
-JSD_website/MoveNet.py: The main backend code file for the website. Run MoveNet on the streaming video and sent scores.
+    JSD_website/MoveNet.py: The main backend code file for the website. Run MoveNet on the streaming video and sent scores.
 
- JSD_website/server.py: Flask backend 
+    JSD_website/server.py: Flask backend 
 
 ### [Code_run_on_colab](https://github.com/adiojha629/JustDance_Everywhere/tree/main/code_run_on_colab)
 
@@ -89,13 +89,4 @@ In detail, it contains:
 
    ### [Others](https://github.com/adiojha629/JustDance_Everywhere/tree/main/Others)
 
-   These are the codes that we used during the developing stage, but are no longer used for the final result. These includes other pose estimation models we tried and other versions of the Interface.
-
-   
-
-   
-
-
-
-
-
+   These programs were made during the developing stage of the project and are no longer used for the final result. This includes code used to run other pose estimation models and different versions of the game interface.
