@@ -1,0 +1,85 @@
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    background-color: #dff9fb;
+}
+
+h1{
+    z-index: 1;
+}
+
+box{
+    height: 90vh;
+    margin: 0 auto;
+    position: relative;
+}
+
+video {
+    /* width: vw; */
+    z-index: -2;
+    /* top:10vh; */
+    /* object-fit: cover;
+    position: fixed; */ 
+    height: 90vh;
+    display: block;
+    margin: 0 auto;
+}
+
+
+.item1 {
+    position: absolute;
+    top: 15vh;
+    margin: 0 auto;
+    left: 5vw;
+
+}
+
+.start_button{
+    position: absolute;
+    top: 5vh;
+    left: 45vw;
+    width: auto;
+}
+
+
+
+/* -----------------------------Button --------------------------------- */
+/*  */
+/* reference: https: //codepen.io/Griezzi/pen/mdOzrWP */
+.glightbox_video {
+    z-index: 10;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.outer_circle {
+    stroke-width: 3;
+    stroke-dasharray: 410;
+    stroke-dashoffset: 0;
+    stroke-linecap: square;
+    transition: all .4s ease-out;
+}
+
+.glightbox_video:hover .outer_circle {
+    stroke-dashoffset: 410;
+    transition: stroke .7s .4s ease-out, stroke-dashoffset .4s ease-out
+}
+
+.glightbox_video:hover .inner-circle {
+    fill: #BF2428;
+    transition: fill .4s .3s ease-out;
+
+}
+
+.glightbox_video:hover .play {
+    fill: white;
+    transition: fill .4s .3s ease-out;
+}
+
+
+
