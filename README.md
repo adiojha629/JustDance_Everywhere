@@ -91,7 +91,7 @@ In detail, it contains:
 
    These programs were made during the developing stage of the project and are no longer used for the final result. This includes code used to run other pose estimation models and different versions of the game interface.
    
-   ### Coding Reference
+   ### Code References
    
    [opencv stream video to web browser](https://pyimagesearch.com/2019/09/02/opencv-stream-video-to-web-browser-html-page/)
    
