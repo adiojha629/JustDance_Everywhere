@@ -9,7 +9,7 @@ Under JustDance_Everywhere/[JSD_website](https://github.com/adiojha629/JustDance
 
 'python .\server.py' 
 
-Note: currently the command have to run from the JSD_website directory.
+Note: currently the command has to be run from the JSD_website directory.
 
 After the website show up, click the button at the middle of the justdance video and the game would start in 10 seconds. 
 
