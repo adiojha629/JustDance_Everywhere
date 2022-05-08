@@ -96,7 +96,7 @@ In detail, it contains:
    https://pyimagesearch.com/2019/09/02/opencv-stream-video-to-web-browser-html-page/
    https://github.com/nicknochnack/MoveNetLightning
    https://github.com/CMU-Perceptual-Computing-Lab/openpose 
-   https: //codepen.io/Griezzi/pen/mdOzrWP */
+   https://codepen.io/Griezzi/pen/mdOzrWP
    https://stackoverflow.com/questions/2049582/how-to-determine-the-angle-between-3-points
    https://towardsdatascience.com/build-a-youtube-downloader-with-python-8ef2e6915d97
    
