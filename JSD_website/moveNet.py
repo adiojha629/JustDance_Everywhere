@@ -288,7 +288,6 @@ def get_web():
           # setup input and output
           input_details = interpreter.get_input_details()
           output_details = interpreter.get_output_details()
-
           # make predictions
           interpreter.set_tensor(
               input_details[0]['index'], np.array(input_image))
