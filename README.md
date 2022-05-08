@@ -1,7 +1,7 @@
 # JustDance_Everywhere
 Spring 22 CV Project
 
-
+![hippo](Others/JustDance_giif.gif)
 
 ### Play the Game
 
