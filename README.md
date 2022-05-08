@@ -93,12 +93,17 @@ In detail, it contains:
    
    ### Coding Reference
    
-   https://pyimagesearch.com/2019/09/02/opencv-stream-video-to-web-browser-html-page/
-   https://github.com/nicknochnack/MoveNetLightning
-   https://github.com/CMU-Perceptual-Computing-Lab/openpose 
-   https://codepen.io/Griezzi/pen/mdOzrWP
-   https://stackoverflow.com/questions/2049582/how-to-determine-the-angle-between-3-points
-   https://towardsdatascience.com/build-a-youtube-downloader-with-python-8ef2e6915d97
+   [opencv stream video to web browser](https://pyimagesearch.com/2019/09/02/opencv-stream-video-to-web-browser-html-page/)
+   
+   [MoveNetLightning](https://github.com/nicknochnack/MoveNetLightning)
+   
+   [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose)
+   
+   [CSS play button](https://codepen.io/Griezzi/pen/mdOzrWP)
+   
+   [Find Angle](https://stackoverflow.com/questions/2049582/how-to-determine-the-angle-between-3-points)
+   
+   [youtube downloader](https://towardsdatascience.com/build-a-youtube-downloader-with-python-8ef2e6915d97)
    
 
    
