@@ -1,7 +1,7 @@
 # JustDance_Everywhere
 Spring 22 - Introduction to Computer Vision Course Course Project
 
-Authored by team MAKY: **M**ingxuan Zhao, **A**ditya Ojha, **K**evin Wang and **Y**unong Liu
+**Authored by team MAKY: Mingxuan Zhao, Aditya Ojha, Kevin Wang and Yunong Liu**
 
 ![hippo](Others/JustDance_giif.gif)
 
