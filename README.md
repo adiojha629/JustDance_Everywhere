@@ -1,6 +1,8 @@
 # JustDance_Everywhere
 Spring 22 CV Project
 
+Authored by team MAKY: Mingxuan Zhao, Aditya Ojha, Kevin Wang and Yunong Liu
+
 ![hippo](Others/JustDance_giif.gif)
 
 ### Play the Game
